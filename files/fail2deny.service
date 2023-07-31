@@ -1,0 +1,8 @@
+[Unit]
+Description=fail2deny
+
+[Service]
+ExecStart=/usr/bin/fail2deny /var/log/auth.log
+
+[Install]
+WantedBy=multi-user.target

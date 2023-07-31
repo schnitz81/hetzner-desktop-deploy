@@ -1,0 +1,29 @@
+- name: Update root password
+  user:
+    name: root
+    update_password: always
+    password: "{{ rootpw }}"
+
+- name: permit root login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^(.?)PermitRootLogin(.*)$'
+    line: PermitRootLogin yes
+
+- name: permit password login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^(.?)PasswordAuthentication(.*)$'
+    line: PasswordAuthentication yes
+
+- name: Reload ssh config changes
+  ansible.builtin.systemd:
+    name: ssh.service 
+    daemon_reload: true
+
+- name: add ll alias for root 
+  ansible.builtin.lineinfile:
+    path: /root/.bashrc
+    regexp: '^(.?)alias ll'
+    line: alias ll='ls -al'
+

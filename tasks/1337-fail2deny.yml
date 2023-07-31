@@ -1,0 +1,35 @@
+- name: Download fail2deny
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/schnitz81/fail2deny/master/iptables/fail2deny.sh
+    dest: /usr/bin/fail2deny
+    mode: '0755'
+
+- name: Make fail2deny less verbose
+  ansible.builtin.lineinfile:
+    path: /usr/bin/fail2deny
+    state: absent
+    regexp: '^set -x'
+
+- name: Install inotify-tools
+  apt:
+    name:
+      - inotify-tools 
+    state: present
+
+- name: Copy fail2deny unit file 
+  ansible.builtin.copy:
+    src: files/fail2deny.service 
+    dest: /etc/systemd/system/fail2deny.service 
+    owner: root
+    group: root
+    mode: '0755'
+  register: servicecreate
+
+
+- name: Enable and start service fail2deny
+  ansible.builtin.systemd:
+    name: fail2deny
+    state: started
+    enabled: true
+    masked: false
+  when: servicecreate is succeeded 

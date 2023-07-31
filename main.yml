@@ -1,0 +1,26 @@
+---
+- hosts: all
+  user: root
+  vars:
+    # debugging, can be set to false
+    debug_mode: true
+
+  tasks:
+    - name: apt
+      import_tasks: "tasks/0-apt.yml"
+      run_once: true
+    - name: base
+      import_tasks: "tasks/1-base.yml"
+      run_once: true
+    - name: base
+      import_tasks: "tasks/2-baseconf.yml"
+      run_once: true
+    - name: fail2deny
+      import_tasks: "tasks/1337-fail2deny.yml"
+      run_once: true
+    - name: desktop
+      import_tasks: "tasks/3-desktop.yml"
+      run_once: true
+    - name: desktoplogin
+      import_tasks: "tasks/4-desktopconf.yml"
+      run_once: true

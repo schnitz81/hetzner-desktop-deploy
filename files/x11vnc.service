@@ -1,0 +1,8 @@
+[Unit]
+Description=x11vnc
+
+[Service]
+ExecStart=/usr/bin/x11vnc -display :0 -forever -passwd VNCPW -auth guess
+
+[Install]
+WantedBy=multi-user.target

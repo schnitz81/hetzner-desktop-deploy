@@ -1,0 +1,16 @@
+- name: Package | Install lists packages
+  apt:
+    name:
+      - vim
+      - git
+      - htop
+      - tree
+      - screen
+      - curl
+      - wget
+      - unzip
+      - neofetch
+      - iotop
+      - tree
+      - vim
+    state: present

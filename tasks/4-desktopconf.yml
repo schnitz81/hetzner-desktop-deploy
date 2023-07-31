@@ -1,0 +1,42 @@
+- name: Copy lightdm conf
+  ansible.builtin.copy:
+    src: files/lightdm.conf 
+    dest: /etc/lightdm/lightdm.conf 
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
+- name: reconf xserverrc
+  ansible.builtin.replace:
+    path: /etc/X11/xinit/xserverrc 
+    regexp: 'nolisten'
+    replace: 'listen'
+
+- name: Copy x11vnc unit file 
+  ansible.builtin.copy:
+    src: files/x11vnc.service 
+    dest: /etc/systemd/system/x11vnc.service 
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Set vnc password
+  ansible.builtin.replace:
+    path: /etc/systemd/system/x11vnc.service
+    regexp: 'VNCPW'
+    replace: "{{ vncpw }}" 
+
+- name: Enable and start service x11vnc 
+  ansible.builtin.systemd:
+    name: x11vnc 
+    state: started
+    enabled: true
+    masked: false
+    daemon_reload: true
+  register: servicecreate
+
+- name: Reboot 
+  ansible.builtin.reboot:
+    reboot_timeout: 60
+  when: servicecreate is succeeded
