@@ -1,4 +1,4 @@
-- name: Package | Install lists packages
+- name: Package | Install desktop packages
   apt:
     name:
       - xinit
