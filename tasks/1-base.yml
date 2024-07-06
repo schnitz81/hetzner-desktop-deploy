@@ -1,4 +1,4 @@
-- name: Package | Install lists packages
+- name: Package | Install base packages
   apt:
     name:
       - vim

@@ -1,6 +1,6 @@
 - name: Download fail2deny
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/schnitz81/fail2deny/master/iptables/fail2deny.sh
+    url: https://raw.githubusercontent.com/schnitz81/fail2deny/master/fail2deny.sh
     dest: /usr/bin/fail2deny
     mode: '0755'
 
@@ -10,21 +10,31 @@
     state: absent
     regexp: '^set -x'
 
-- name: Install inotify-tools
+- name: Install inotify-tools and rsyslog
   apt:
     name:
-      - inotify-tools 
+      - inotify-tools
+      - rsyslog
     state: present
+  register: pkginstall
 
-- name: Copy fail2deny unit file 
+- name: Enable and start service rsyslog
+  ansible.builtin.systemd:
+    name: rsyslog
+    state: started
+    enabled: true
+    masked: false
+  register: logservice
+  when: pkginstall is succeeded
+
+- name: Copy fail2deny unit file
   ansible.builtin.copy:
-    src: files/fail2deny.service 
-    dest: /etc/systemd/system/fail2deny.service 
+    src: files/fail2deny.service
+    dest: /etc/systemd/system/fail2deny.service
     owner: root
     group: root
     mode: '0755'
   register: servicecreate
-
 
 - name: Enable and start service fail2deny
   ansible.builtin.systemd:
@@ -32,4 +42,4 @@
     state: started
     enabled: true
     masked: false
-  when: servicecreate is succeeded 
+  when: servicecreate is succeeded and logservice is succeeded

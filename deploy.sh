@@ -35,3 +35,6 @@ terraform init &&
 terraform apply -auto-approve
 sleep 30
 ansible-playbook --private-key "$KEY_FILE" -i inventory -e "rootpw=$pwhash" -e "vncpw=$vncpw" main.yml
+
+# print out ipv4 address
+grep 'ipv4_address' terraform.tfstate | tail -n 1
