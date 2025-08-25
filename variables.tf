@@ -4,7 +4,7 @@ variable "servername" {
 }
 
 variable "hcloud_token" {
-  sensitive = true  # Requires terraform >= 0.14
+  sensitive = true
 }
 
 variable "sshkey_name" {

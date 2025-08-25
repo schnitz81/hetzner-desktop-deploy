@@ -14,7 +14,7 @@
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^(.?)PasswordAuthentication(.*)$'
-    line: PasswordAuthentication yes
+    line: "PasswordAuthentication {{ sshpwauth }}"
 
 - name: Reload ssh config changes
   ansible.builtin.systemd:

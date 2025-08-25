@@ -5,12 +5,13 @@
       - git
       - htop
       - tree
-      - screen
+      - tmux 
       - curl
       - wget
       - unzip
-      - neofetch
+      - neowofetch
       - iotop
       - tree
       - vim
+      - gdu
     state: present

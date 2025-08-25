@@ -1,7 +1,7 @@
 // Link a server to a primary IP
 resource "hcloud_server" "server_1" {
   name        = var.servername 
-  image       = "debian-12"
+  image       = "debian-13"
   server_type = "cax11"
   datacenter  = "fsn1-dc14"
   ssh_keys    = [data.hcloud_ssh_key.ssh_key_1.name]
