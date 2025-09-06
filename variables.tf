@@ -10,3 +10,8 @@ variable "hcloud_token" {
 variable "sshkey_name" {
 
 }
+
+variable "open_ports" {
+  type = set(string)
+  default = []
+}

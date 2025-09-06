@@ -1,6 +1,10 @@
 #!/bin/bash
 
 KEY_FILE="private.key"
+ARR_FWOPENPORTS=()
+
+nbrreg="^[0-9]+$"
+
 
 # check if terraform is installed
 if [ -z "$(which terraform)" ] ; then
@@ -32,7 +36,7 @@ else
 	fi
 fi
 
-echo ; read -p "Choose server name: " servername 
+echo ; read -p "Choose server name: " servername
 
 echo ; read -s -p "Set root password for VM: " rootpw
 pwhash=$(mkpasswd -m sha512crypt --stdin <<< "$(echo $rootpw)")
@@ -45,6 +49,37 @@ if [ "$sshpassauth" == "y" ] || [ "$sshpassauth" == "Y" ] || [ "$sshpassauth" ==
 	sshpassauthvar="yes"
 else
 	sshpassauthvar="no"
+fi
+
+# enable firewall
+echo ; read -p "Enable VDC firewall? : " enablefwinput
+if [ "$enablefwinput" == "y" ] || [ "$enablefwinput" == "Y" ] || [ "$enablefwinput" == "yes" ] || [ "$enablefwinput" == "YES" ]; then
+	ARR_FWOPENPORTS+=(22)
+	echo "Port 22 is automatically opened."
+	echo ; read -p "Open VNC port? (5900): " enablevncport
+	if [ "$enablevncport" == "y" ] || [ "$enablevncport" == "Y" ] || [ "$enablevncport" == "yes" ] || [ "$enablevncport" == "YES" ]; then
+		ARR_FWOPENPORTS+=(5900)
+	fi
+	fwporttoadd=""
+	while true; do
+		echo ; read -p "Choose another port to open if needed (or any letter to continue): " fwporttoadd
+		if [[ $fwporttoadd =~ $nbrreg ]]; then
+			ARR_FWOPENPORTS+=($fwporttoadd)
+		else
+			break
+		fi
+	done
+fi
+
+# check if port array is empty
+if [ ${#ARR_FWOPENPORTS[@]} -eq 0 ]; then
+	# use an empty terraform data set if no firewall is selected
+	export TF_VAR_open_ports="[]"
+else
+	echo -n "ports being applied: "
+	echo "${ARR_FWOPENPORTS[@]}"
+	# convert port array to json-like string for terraform to handle it like a data set
+	export TF_VAR_open_ports=$(printf '[%s]' "$(IFS=','; echo "${ARR_FWOPENPORTS[*]}")")
 fi
 
 terraform init &&
